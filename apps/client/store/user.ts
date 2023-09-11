@@ -1,6 +1,6 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable @nx/enforce-module-boundaries */
-import { type UserDto } from '../../../libs/dto/src/lib/user/user.dto'
+// import { type UserDto } from '../../../libs/dto/src/lib/user/user.dto'
 import { create } from 'zustand'
 
 const pins = [
@@ -28,7 +28,7 @@ const interests = [
   'Interes 4'
 ]
 
-const user: UserDto = {
+const user = {
   firstName: 'Juan',
   lastName: 'Serrano',
   email: 'hola@mundo.com',
@@ -49,7 +49,7 @@ const user: UserDto = {
 
 // Define la estructura de UserDto
 interface User {
-  info: UserDto;
+  info: any;
   pins: string[];
   interests: string[];
 };
@@ -77,7 +77,7 @@ export const useUserStore = create<UserStore>((set) => ({
 
       const pinsData: string[] = await pinsResponse.json()
       const interestsData: string[] = await interestsResponse.json()
-      const userR: UserDto = await userResponse.json()
+      const userR = await userResponse.json()
 
       const user: User = {
         info: userR,
