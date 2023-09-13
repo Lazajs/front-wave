@@ -1,11 +1,11 @@
-import { type UserDto } from "../../libs/dto/src/lib/user/user.dto";
-import { type CategoryDto } from "../../libs/dto/src/lib/user/update-categorys-user.dto";
+// import { type UserDto } from "../../libs/dto/src/lib/user/user.dto";
+// import { type CategoryDto } from "../../libs/dto/src/lib/user/update-categorys-user.dto";
 
-export interface User extends UserDto { // Could change in the future
+export interface User extends any { // Could change in the future
 
 }
 
-export interface Category extends CategoryDto { // Could change in the future
+export interface Category extends any { // Could change in the future
   pins: Category['pins'] | {category: string}
 }
 
