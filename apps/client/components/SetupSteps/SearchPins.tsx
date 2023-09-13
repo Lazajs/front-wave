@@ -6,10 +6,11 @@ type Category = any
 
 interface Props {
   setPins: React.Dispatch<React.SetStateAction<Category['pins']>>
-  selected: string
+  selected: string,
+  setIsLoading: React.Dispatch<React.SetStateAction<boolean>>
 }
 
-export function SearchPins ({ setPins, selected }: Props) {
+export function SearchPins ({ setPins, selected, setIsLoading }: Props) {
   const [search, setSearch] = useState('')
 
   const handleChange = ({ target }: {target: HTMLInputElement}) => setSearch(target.value)
@@ -18,6 +19,7 @@ export function SearchPins ({ setPins, selected }: Props) {
     async function searchForPins () {
       if (search) {
         const fetchers: Promise<unknown>[] = []
+        setIsLoading(true)
 
         selected.split(',').forEach((category) => {
           if (category === 'Anime') fetchers.push(API.animes.search(search))
@@ -32,6 +34,8 @@ export function SearchPins ({ setPins, selected }: Props) {
           setPins(results as Category['pins'])
         } catch (e) {
           console.error(e)
+        } finally {
+          setIsLoading(false)
         }
       }
     }
