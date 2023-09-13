@@ -1,7 +1,7 @@
 export enum CategoryEnum {
-  Musica = 'Music',
-  Videogames = 'Videogames',
-  Books = 'Books',
-  Zodiac = 'Zodiac',
+  Music = 'Música',
+  Videogames = 'Videojuegos',
+  Movies = 'Películas',
+  TvSeries = 'Series',
   Anime = 'Anime',
 }
