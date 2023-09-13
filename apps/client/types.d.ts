@@ -1,13 +1,10 @@
 // import { type UserDto } from "../../libs/dto/src/lib/user/user.dto";
 // import { type CategoryDto } from "../../libs/dto/src/lib/user/update-categorys-user.dto";
 
-export interface User extends any { // Could change in the future
 
-}
+export type User = any
 
-export interface Category extends any { // Could change in the future
-  pins: Category['pins'] | {category: string}
-}
+export type Category = any
 
 export interface ISession {
   access_token: string
