@@ -1,7 +1,9 @@
 'use client'
 import { createContext, useEffect, useState } from 'react'
-import { type User, type Category } from 'types'
 import { useSession } from 'hooks/useSession'
+
+type Category = any
+type User = any
 
 interface IContext {
   step: number
@@ -45,7 +47,6 @@ export function SetupStepProvider ({ children }: { children: React.ReactNode }) 
       const toSendCategories: Category[] = []
 
       Object.entries(categories).forEach(([key, value]) => {
-        // @ts-expect-error Enum error (server should accept this value)
         toSendCategories.push({ name: key, rate: 4.5, pins: value })
       })
 
