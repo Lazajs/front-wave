@@ -1,11 +1,6 @@
 // import { type UserDto } from "../../libs/dto/src/lib/user/user.dto";
 // import { type CategoryDto } from "../../libs/dto/src/lib/user/update-categorys-user.dto";
 
-
-export type User = any
-
-export type Category = any
-
 export interface ISession {
   access_token: string
   user?: User
