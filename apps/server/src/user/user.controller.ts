@@ -1,11 +1,14 @@
-import { UpdateUserDto } from '@dto';
+import { CategoryDto, UpdateUserDto } from '@dto';
 import {
   Body,
   Controller,
   Get,
+  Inject,
   Param,
+  ParseArrayPipe,
   Post,
   Put,
+  UploadedFile,
   UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
@@ -18,17 +21,30 @@ import {
   ApiParam,
   ApiTags,
 } from '@nestjs/swagger';
+import { User } from '../auth/decorators/user.decorator';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { UserService } from './user.service';
+import { v2 as cloudinarys } from 'cloudinary';
+import { ConfigType } from '@nestjs/config';
+import { appConfig } from '../app/app.config';
 
 @ApiTags('User')
 @Controller('user')
 export class UserController {
-  constructor(private readonly userService: UserService) {
-    // cloudinary.config({
-    //   cloud_name: this.configService.get<string>('cloudinary.cloudName'),
-    //   api_key: this.configService.get<string>('cloudinary.apiKey'),
-    //   api_secret: this.configService.get<string>('cloudinary.apiSecret'),
+  constructor(
+    private readonly userService: UserService,
+    @Inject(appConfig.KEY) { cloudinary }: ConfigType<typeof appConfig>
+  ) {
+    cloudinarys.config({
+      cloud_name: cloudinary.cloud_name,
+      api_key: cloudinary.api_key,
+      api_secret: cloudinary.api_secret,
+    });
+
+    // cloudinarys.config({
+    //   cloud_name: cloudinary.cloud_name,
+    //   api_key: cloudinary.api_key,
+    //   api_secret: cloudinary.api_secret,
     // });
   }
 
@@ -38,26 +54,45 @@ export class UserController {
     return this.userService.getAll();
   }
 
-  @ApiOperation({ summary: 'Get a user by ID' })
+  @ApiOperation({ summary: 'Get user by ID' })
   @Get('/:id')
   getById(@Param('id') id: string) {
     return this.userService.getOne(id);
   }
 
-  @ApiBody({ type: UpdateUserDto })
-  @ApiOperation({ summary: 'Update user information' })
-  @Put('/:id')
-  @UseInterceptors(FileInterceptor('file'))
-  update(
-    @Body() updateUserDto: UpdateUserDto,
-    @Param('id') id: string
-    // @UploadedFile() file: Express.Multer.File
-  ) {
-    // if(file){
-    // const url = await this.userService.uploadImage(file)
-    // const updateimages = await this.userService.update(url)
-    // }
+  @UseGuards(JwtAuthGuard)
+  @ApiOperation({ summary: 'Get user by JWT' })
+  @Get()
+  getByJWT(@User('id') id: string) {
+    return this.userService.getOne(id);
+  }
 
+  @ApiOperation({ summary: 'update categorys' })
+  @ApiBody({ type: CategoryDto })
+  @UseGuards(JwtAuthGuard)
+  @Put('/categorys')
+  updateCategorys(
+    @Body(new ParseArrayPipe({ items: CategoryDto }))
+    updateCategorysDto: CategoryDto[],
+    @User('id') id: string
+  ) {
+    return this.userService.updateCategorys(updateCategorysDto, id);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @ApiBody({ type: [UpdateUserDto] })
+  @ApiOperation({ summary: 'Update user information' })
+  @Put()
+  @UseInterceptors(FileInterceptor('file'))
+  async update(
+    @Body() updateUserDto: UpdateUserDto,
+    @User('id') id: string,
+    @UploadedFile() file: Express.Multer.File
+  ) {
+    if (file) {
+      const url = await this.userService.uploadFile(file);
+      await this.userService.addUrlImages(url, id);
+    }
     return this.userService.update(id, updateUserDto);
   }
 
@@ -65,6 +100,7 @@ export class UserController {
   // delete(@Param('id') id: string){
   //   return this.userService.deleteOne(id)
   // }
+
   @UseGuards(JwtAuthGuard)
   @ApiOperation({ summary: 'Like a user' })
   @ApiNotFoundResponse({ description: `User not found` })
@@ -72,20 +108,14 @@ export class UserController {
     description: `Cannot like yourself. User IDs must be different`,
   })
   @ApiParam({
-    name: 'userId',
-    description: 'ID del usuario que dio el like',
-    required: true,
-    type: 'string',
-  })
-  @ApiParam({
     name: 'idLiked',
     description: 'ID del usuario que fue likeado',
     required: true,
     type: 'string',
   })
-  @Post('/like/:userId/:idLiked')
-  like(@Param('userId') userId: string, @Param('idLiked') idLiked: string) {
-    return this.userService.likedBy(userId, idLiked);
+  @Post('/like/:idLiked')
+  like(@User('id') id: string, @Param('idLiked') idLiked: string) {
+    return this.userService.likedBy(id, idLiked);
   }
 
   @UseGuards(JwtAuthGuard)
@@ -96,22 +126,26 @@ export class UserController {
   })
   @ApiBadRequestResponse({ description: `User 1 already liked user 2` })
   @ApiParam({
-    name: 'userId',
-    description: 'ID del usuario que dio el like',
-    required: true,
-    type: 'string',
-  })
-  @ApiParam({
     name: 'idDisliked',
     description: 'ID del usuario que fue dislikeado',
     required: true,
     type: 'string',
   })
-  @Post('/dislike/:userId/:idDisliked')
-  dislike(
-    @Param('userId') userId: string,
-    @Param('idDisliked') idDisliked: string
+  @Post('/dislike/:idDisliked')
+  dislike(@Param('idDisliked') idDisliked: string, @User('id') id: string) {
+    return this.userService.disLikeBy(id, idDisliked);
+  }
+
+  @UseInterceptors(FileInterceptor('file'))
+  @Get('/prueba/:id')
+  async prueba(
+    // @Body('email') email: string,
+    @UploadedFile() file: Express.Multer.File,
+    @Param('id') id: string
   ) {
-    return this.userService.disLikeBy(userId, idDisliked);
+    const url = await this.userService.prueba(id);
+    // const updateimages = await this.userService.update(url)
+
+    return url;
   }
 }

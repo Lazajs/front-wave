@@ -1,5 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { ArrayMaxSize, ArrayMinSize, IsArray, IsEmail, IsNotEmpty, IsNumber, IsString } from 'class-validator';
+import { CategoryDto } from './update-categorys-user.dto';
 
 export class UserDto {
   @ApiProperty({
@@ -36,8 +37,6 @@ export class UserDto {
   })
   @IsArray()
   images: string[];
-
-  // matches: User[]
 
   @ApiProperty({
     description: 'birthdate (valid Format ISO)',
@@ -102,4 +101,41 @@ export class UserDto {
     example: '["609c1f8d8b937f120c551234","609c1f8d8b937f120c551235","609c1f8d8b937f120c551236"]',
   })
   matches: string[]
+
+  @ApiProperty({
+    description: 'Categorys',
+    example: '[ { "name": "videogames", "rate": 2 , pins:[{},{},{}] } ]',
+  })
+  categorys: CategoryDto[]
+
+  @ApiProperty({
+    description: 'lookingFor',
+    example: 'Enum: ',
+  })
+  lookingFor: string
+
+  @ApiProperty({
+    description: 'User Avatar',
+    example: 'https://res.cloudinary.com/dlvpftdsm/image/upload/v1694119146/Frame_427319187_c6ldi6.png',
+  })
+  avatar: string
+
+
+  @ApiProperty({
+    description: 'range in KM ',
+    example: 'default: 200',
+  })
+  zone: number
+
+  @ApiProperty({
+    description: 'latitude',
+    example: '40.7128',
+  })
+  latitude?: number
+
+  @ApiProperty({
+    description: 'longitude',
+    example: '-74.0060',
+  })
+  longitude?: number
 }

@@ -1,4 +1,4 @@
-import { CreateUserDto, UpdateUserDto, UserDto } from '@dto';
+import { CategoryDto, CreateUserDto, UpdateUserDto, UserDto } from '@dto';
 import {
   Inject,
   Injectable,
@@ -9,6 +9,10 @@ import { UserRepository, UserRepositoryKey } from './user.repository';
 import * as bcrypt from 'bcrypt';
 import { UserDocument } from './entities/user.entity';
 import { UserDislike } from './entities/user-dislike.entity';
+import { UserPin } from './entities/user-pin.entity';
+import { UserCategory } from './entities/user-categorys.entity';
+import { v2 as cloudinary } from 'cloudinary';
+import 'multer';
 // import { appConfig } from '../app/app.config';
 // import { ConfigType } from '@nestjs/config';
 
@@ -36,7 +40,6 @@ export class UserService {
       if (isRegistered) {
         throw new BadRequestException('Email already exists');
       }
-
       // crearlo y retornarlo.
       return await this.userRepository.create(createUserDto);
     } catch (error) {
@@ -113,13 +116,15 @@ export class UserService {
         // esto es un match.
 
         // Eliminarlo de los likedBy
-        const userRegisteredUpdated =
-          await this.userRepository.updateRemoveLike(userId, idLiked);
-        console.log('userRegisteredUpdated', userRegisteredUpdated);
+        await this.userRepository.updateRemoveLike(userId, idLiked);
         // agregar el _id del usuario a la propiedad match del otro. x2
 
-        await this.userRepository.updateAddMatch(userId, idLiked);
+        const updatedUser = await this.userRepository.updateAddMatch(
+          userId,
+          idLiked
+        );
         await this.userRepository.updateAddMatch(idLiked, userId);
+        updatedLikesUser = updatedUser;
 
         // lanzar notificacion de match
       } else {
@@ -196,55 +201,95 @@ export class UserService {
 
   async getOne(id: string): Promise<UserDto | undefined | null> {
     try {
-      return this.userRepository.findById(id);
+      return this.userRepository.findOne(id);
     } catch (error) {
       console.log(error);
       throw new BadRequestException(error);
     }
   }
 
-  async prueba(
-    userId: string,
-    idLiked: string
-  ): Promise<UserDto | undefined | null> {
+  async prueba(userId: string): Promise<UserDto | undefined | null> {
     try {
-      console.log(userId, idLiked);
-      const userRegisteredUpdated = await this.userRepository.updateRemoveLike(
-        userId,
-        idLiked
-      );
-      console.log(userRegisteredUpdated);
+      const userRegisteredUpdated = await this.userRepository.findOne(userId);
       return userRegisteredUpdated;
     } catch (error) {
       console.log(error);
+    }
+  }
+
+  async updateCategorys(updateCategorys: CategoryDto[], userId: string) {
+    try {
+      updateCategorys.forEach(async ({ name, rate, pins }) => {
+        // creo los pines
+        console.log(pins);
+        const newPins = pins.map(
+          (p) => new UserPin(p.name, p.imgUrl, p.subCategories)
+        );
+        // creo la categoria
+        const categorys = new UserCategory(name, rate, newPins);
+
+        // pusheo la categoria
+        // verifico si ya existe la categoria.
+
+        const existingCategory = await this.userRepository.existingCategory(
+          userId,
+          categorys.name
+        );
+
+        if (existingCategory) {
+          // estaba creado y lo actualiza.
+          await this.userRepository.updateCategory(userId, categorys);
+        } else {
+          // lo crea nuevo
+          await this.userRepository.updateAddCategory(userId, categorys);
+        }
+      });
+
+      const userUpdated = await this.userRepository.confirmProfileConfigured(
+        userId
+      );
+
+      return userUpdated;
+    } catch (error) {
+      throw new BadRequestException(error);
     }
   }
   // async deleteOne(id: string): Promise<UserDto | undefined | null>{
   //   return  this.userRepository.deleteOne(id)
   // }
 
-  // async uploadFile(file: Express.Multer.File): Promise<string> {
-  //   try {
-  //     const result = await new Promise<string>((resolve, reject) => {
-  //       cloudinary.uploader
-  //         .upload_stream(
-  //           {
-  //             resource_type: 'auto',
-  //           },
-  //           (error: any, result: any) => {
-  //             if (error) {
-  //               reject(error);
-  //             } else {
-  //               resolve(result.secure_url);
-  //             }
-  //           },
-  //         )
-  //         .end(file.buffer);
-  //     });
-  //     console.log(result);
-  //     return result;
-  //   } catch (error) {
-  //     throw new Error(error);
-  //   }
-  // }
+  async uploadFile(file: Express.Multer.File): Promise<string> {
+    try {
+      const result = await new Promise<string>((resolve, reject) => {
+        cloudinary.uploader
+          .upload_stream(
+            {
+              resource_type: 'auto',
+            },
+            (error: any, result: any) => {
+              if (error) {
+                reject(error);
+              } else {
+                resolve(result.secure_url);
+              }
+            }
+          )
+          .end(file.buffer);
+      });
+      console.log(result);
+
+      return result;
+    } catch (error) {
+      console.log(error);
+      throw new Error('Error al cargar el archivo a Cloudinary');
+    }
+  }
+
+  async addUrlImages(url: string, userId: string) {
+    try {
+      return await this.userRepository.updateAddImage(userId, url);
+    } catch (error) {
+      return error;
+    }
+  }
 }
