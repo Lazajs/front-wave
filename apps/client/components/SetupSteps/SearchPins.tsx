@@ -1,7 +1,8 @@
 import style from './style.module.scss'
 import { useState, useEffect } from 'react'
-import { type Category } from 'types'
 import { API } from 'services/categories'
+
+type Category = any
 
 interface Props {
   setPins: React.Dispatch<React.SetStateAction<Category['pins']>>

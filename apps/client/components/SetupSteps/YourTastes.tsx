@@ -7,7 +7,9 @@ import Image from 'next/image'
 import { Checkbox } from './Checkbox'
 import { SearchPins } from './SearchPins'
 import { useState } from 'react'
-import { type Category } from 'types'
+// import { type Category } from 'types'
+
+type Category = any
 interface FormFields {
   interests: string
   categories: Category['pins']
