@@ -1,5 +1,7 @@
 import { request } from './request'
-import { type Category } from 'types'
+// import { type Category } from 'types'
+
+type Category = any
 
 const movies = {
   get: async (page = 1) => {
