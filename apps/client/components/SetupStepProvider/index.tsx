@@ -62,7 +62,6 @@ export function SetupStepProvider ({ children }: { children: React.ReactNode }) 
         .then((res) => res.ok && nextStep())
         .catch(console.error)
     }
-    nextStep()
   }, [categories])
 
   return (
