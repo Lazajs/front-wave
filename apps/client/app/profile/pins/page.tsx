@@ -12,8 +12,8 @@ import { SearchPins } from 'components/SetupSteps/SearchPins'
 // import { Category } from 'types'
 // import { CategoryDto } from '../../../../../libs/dto/src/lib/user/update-categorys-user.dto'
 import { Pin } from 'components/Pin'
-
-export enum CategoryEnum {
+ 
+enum CategoryEnum {
   Music = 'Música',
   Videogames = 'Videojuegos',
   Movies = 'Películas',
