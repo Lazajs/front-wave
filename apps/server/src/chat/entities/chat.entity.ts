@@ -1,6 +1,7 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+import { HydratedDocument } from 'mongoose';
 
-@Schema({ timestamps: true })
+@Schema({ timestamps: true, toJSON: { virtuals: true } })
 export class Chat {
   @Prop()
   id: string;
@@ -18,3 +19,4 @@ ChatSchema.virtual('messages', {
 });
 
 export { ChatSchema };
+export type ChatDocument = HydratedDocument<Chat>;
