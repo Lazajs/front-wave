@@ -1,4 +1,6 @@
 /* eslint-disable @next/next/no-img-element */
+// ts-noceck
+/* eslint-disable */
 'use client'
 import { Icons } from 'components/Icons'
 import style from './style.module.scss'
@@ -137,7 +139,7 @@ export default function Index () {
                 <h2 className={style['aboutme__interests-title']}>Mis intereses</h2>
                 <ul className={style['aboutme__interests-content']}>
                   {
-                    userState?.user?.categorys.map((interest, index) => (
+                    userState?.user?.categorys.map((interest: any, index: any) => (
                         <li key={index} className={style.aboutme__interest}>
                           {interest.name}
                         </li>
@@ -148,7 +150,7 @@ export default function Index () {
               <div className={style.aboutme__preview3}>
                 <h2>Mis pines</h2>
                 <div className={style.aboutme__pins}>
-                  {userState?.user?.categorys.map((item) => item.pins.slice(0, 1).map((pin, index) => (
+                  {userState?.user?.categorys.map((item: any) => item.pins.slice(0, 1).map((pin: any, index: any) => (
                     <figure key={index} className={style.aboutme__pin}>
                       <img src={pin.imgUrl} alt="" />
                     </figure>
