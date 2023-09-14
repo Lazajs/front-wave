@@ -3,9 +3,11 @@
 import UserMatchCard from 'components/UserMatchCard'
 import style from './page.module.scss'
 import { slideAnimation } from '../../libs/slideAnimation'
-import { type User } from 'types'
+// import { type User } from 'types'
 import { useState, useRef, useEffect } from 'react'
 import { useSession } from 'hooks/useSession'
+
+type User = any
 
 export function ClientPage () {
   const [matches, setMatches] = useState<User[] | []>([])
