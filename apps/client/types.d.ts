@@ -7,6 +7,7 @@ export interface ISession {
 }
 
 export type Category = any
+export type User = any
 
 // ! Animes
 export type Animes = Anime[]
