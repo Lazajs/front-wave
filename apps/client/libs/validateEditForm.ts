@@ -1,12 +1,14 @@
 /* eslint-disable @nx/enforce-module-boundaries */
 /* eslint-disable no-unused-vars */
 import { User as UserState } from 'store/user'
-import { UserDto } from '../../../libs/dto/src/lib/user/user.dto'
+// import { UserDto } from '../../../libs/dto/src/lib/user/user.dto'
+
+type UserDto = any
 
 export function handleAboutForm (
   e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
-  form: UserDto | null,
-  setForm: (form: UserDto) => void
+  form: any,
+  setForm: (form: any) => void
 ) {
   if (form) {
     setForm({

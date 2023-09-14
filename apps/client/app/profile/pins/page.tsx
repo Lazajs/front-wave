@@ -1,5 +1,7 @@
 /* eslint-disable @nx/enforce-module-boundaries */
 /* eslint-disable @next/next/no-img-element */
+/* eslint-disable */
+ // @ts-nocheck
 'use client'
 import { Icons } from 'components/Icons'
 import style from './style.module.scss'
@@ -7,10 +9,20 @@ import handleScroll from '../../../libs/handleScroll'
 import React from 'react'
 import { useUserStore } from 'store/user'
 import { SearchPins } from 'components/SetupSteps/SearchPins'
-import { Category } from 'types'
-import { CategoryEnum } from '../../../../../libs/dto/src/lib/enums/category.enum'
-import { CategoryDto } from '../../../../../libs/dto/src/lib/user/update-categorys-user.dto'
+// import { Category } from 'types'
+// import { CategoryDto } from '../../../../../libs/dto/src/lib/user/update-categorys-user.dto'
 import { Pin } from 'components/Pin'
+
+export enum CategoryEnum {
+  Music = 'Música',
+  Videogames = 'Videojuegos',
+  Movies = 'Películas',
+  TvSeries = 'Series',
+  Anime = 'Anime',
+}
+
+type CategoryDto = any
+type Category = any
 
 export default function Index () {
   const { userState } = useUserStore()

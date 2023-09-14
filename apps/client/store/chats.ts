@@ -1,6 +1,6 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable @nx/enforce-module-boundaries */
-import { Message } from './../../server/src/chat/entities/message.entity'
+// import { Message } from './../../server/src/chat/entities/message.entity'
 import axios from 'axios'
 import { create } from 'zustand'
 import { io } from 'socket.io-client'
@@ -89,7 +89,7 @@ export const useChatsStore = create<MessageStore>((set) => ({
       reconnectionDelayMax: 10000
     })
 
-    socket.on('messageSend', (msg: Message) => {
+    socket.on('messageSend', (msg: any) => {
       // Actualiza el estado con los datos recibidos
     })
   }

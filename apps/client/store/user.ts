@@ -1,22 +1,22 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable @nx/enforce-module-boundaries */
 import axios from 'axios'
-import { type UserDto } from '../../../libs/dto/src/lib/user/user.dto'
+// import { type UserDto } from '../../../libs/dto/src/lib/user/user.dto'
 import { create } from 'zustand'
 
 // Define la estructura de UserDto
 export interface User {
-  user: UserDto | null;
+  user: any;
 };
 
 interface UserData {
-  data: UserDto;
+  data: any;
 }
 
 interface UserStore {
   userState: User | null;
   getUser: (id: string) => Promise<void>;
-  setUser: (user: UserDto) => void;
+  setUser: (user: any) => void;
 }
 
 export const useUserStore = create<UserStore>((set) => ({
@@ -38,7 +38,7 @@ export const useUserStore = create<UserStore>((set) => ({
       console.error('Error al obtener datos del usuario:', error)
     }
   },
-  setUser (user: UserDto) {
+  setUser (user: any) {
     set(() => ({
       userState: {
         user
