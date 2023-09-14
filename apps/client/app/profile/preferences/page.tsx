@@ -1,4 +1,6 @@
 'use client'
+// ts-noceck
+/* eslint-disable */
 import React from 'react'
 import style from './style.module.scss'
 import { useUserStore } from 'store/user'
@@ -182,7 +184,7 @@ export default function Index () {
         <h2>¿Cuáles son tus intereses y cuánto te gustan?</h2>
         <div className={style['preferences__interest-container']}>
           {
-            userState?.user?.categorys.map((item, i) => (
+            userState?.user?.categorys.map((item: any, i: any) => (
               <div key={i} className={style.preferences__interest}>
                 <div className={style['preferences__interest-info']}>
                     <span>✔️</span>

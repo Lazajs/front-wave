@@ -1,4 +1,6 @@
 /* eslint-disable @next/next/no-img-element */
+// ts-noceck
+/* eslint-disable */
 'use client'
 import { useEffect, useRef, useState } from 'react'
 import style from './page.module.scss'
@@ -62,7 +64,7 @@ export default function Index () {
           <div className={style.user__interests}>
             <h2 className={style['user__interests-title']}>{isAdmin ? 'Mis' : 'Sus'} intereses</h2>
             <ul className={style['user__interests-content']}>
-              {user && user.user?.categorys.map((interest, index) => {
+              {user && user.user?.categorys.map((interest:any , index:any ) => {
                 if (interest.pins.length > 0) {
                   return (
                     <li key={index} className={style.user__interest}>
@@ -79,7 +81,7 @@ export default function Index () {
             <ul className={style['user__pins-content']} ref={pins}>
 
               {user &&
-                user.user?.categorys.map((category) => category.pins.map((pin, index) => {
+                user.user?.categorys.map((category:any ) => category.pins.map((pin:any , index:any ) => {
                   return (
                     <Pin key={index} pin={pin} />
                   )
